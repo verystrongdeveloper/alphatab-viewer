@@ -9,15 +9,15 @@ const statusMsg = document.getElementById('status-msg');
 
 const settings = {
     core: {
-        engine: 'html5',
+        // engine: 'html5', // 1.8.1 uses 'svg' by default
     },
     display: {
         layoutMode: 0,    // LayoutMode.Page
-        staveProfile: 3,  // StaveProfile.ScoreTab (악보 + 타브)
+        staveProfile: 'ScoreTab',  // 악보 + 타브 (1.8.1 권장 설정)
     },
     player: {
         enablePlayer: true,
-        soundFont: 'https://unpkg.com/@coderline/alphatab@1.2.3/dist/soundfont/sonivox.sf2',
+        soundFont: 'https://unpkg.com/@coderline/alphatab@1.8.1/dist/soundfont/sonivox.sf2',
         scrollElement: document.getElementById('score-container')
     }
 };
