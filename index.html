@@ -66,29 +66,59 @@
                 <span class="text-slate-500">Ctrl+Enter to Render</span>
             </div>
             <textarea id="tex-input" class="flex-1 w-full bg-slate-900 text-slate-200 font-mono text-sm p-4 resize-none focus:outline-none leading-relaxed" spellcheck="false">
-\title "TabRoll Demo"
-\subtitle "MetaVibe Original"
-\artist "User"
+\title "All Techniques Demo"
+\subtitle "AlphaTex Reference"
+\artist "MetaVibe"
 \tempo 120
 
-. 
-// ↑↑↑ 점(.) 필수!
+.
+// ① 음표 길이 (Duration: 1 2 4 8 16)
+:1 0.6 |
+:2 0.6 2.5 |
+:4 0.6 2.5 3.4 5.4 |
+:8 0.6 2.5 3.4 5.4 7.3 5.4 3.4 2.5 |
+:16 5.1 7.1 5.1 7.1 5.1 7.1 5.1 7.1 5.1 7.1 5.1 7.1 5.1 7.1 5.1 7.1 |
 
-// 1. 멜로디 파트
-:4 3.5 5.5 6.5 7.5 |
-:4 3.5 5.5 6.5 7.5 |
+// ② 쉼표 (Rest: r)
+:4 0.6 r 2.5 r |
 
-// 2. 파워 코드
-(0.6 2.5 2.4) (0.6 2.5 2.4) (0.6 2.5 2.4) (0.6 2.5 2.4) |
-(3.6 5.5 5.4) (3.6 5.5 5.4) (3.6 5.5 5.4) (3.6 5.5 5.4) |
+// ③ 코드 (Chord: ())
+:4 (0.6 2.5 2.4) (0.6 2.5 2.4) (3.6 5.5 5.4) (3.6 5.5 5.4) |
 
-// 3. 다시 멜로디
-:2 3.4 5.4 :4 6.4 8.4 |
-:2 3.4 5.4 :4 6.4 8.4 |
+// ④ 해머온 (Hammer-on: {h})
+:8 5.2{h} 7.2 5.2{h} 7.2 5.2{h} 7.2 r r |
 
+// ⑤ 풀오프 (Pull-off: {p})
+:8 7.2{p} 5.2 7.2{p} 5.2 7.2{p} 5.2 r r |
+
+// ⑥ 해머온 + 풀오프
+:8 5.2{h} 7.2{p} 5.2 r 5.2{h} 7.2{p} 5.2 r |
+
+// ⑦ 레가토 슬라이드 (Legato Slide: {sl})
+:4 5.3{sl} 7.3 5.3{sl} 7.3 |
+
+// ⑧ 벤딩 (Bend: {b (pos val ...)})
+:4 7.3{b (0 4)} r 9.3{b (0 4)} r |
+
+// ⑨ 비브라토 (Vibrato: {v})
+:2 7.2{v} 9.3{v} |
+
+// ⑩ 트릴 (Trill: {tr fret duration})
+:2 7.2{tr 9 16} 5.2{tr 7 16} |
+
+// ⑪ 페이드인 (Fade In: {f})
+:2 0.6{f} r |
+
+// ⑫ 트레몰로 피킹 (Tremolo Picking: {tp subdivision})
+:4 7.3{tp 8} 7.3{tp 8} 7.3{tp 8} 7.3{tp 8} |
+
+// ⑬ 템포 변경 + 16분음표 속주
 \tempo 160
-// 4. 빠른 속주
-:8 12.2 15.2 12.2 15.2 12.2 15.2 12.2 15.2 | 
+:16 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 |
+:16 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 |
+
+// ⑭ 엔딩
+\tempo 80
 :1 (0.6 2.5 2.4 0.3 0.2 0.1)
 </textarea>
         </section>
@@ -102,7 +132,7 @@
 
             <!-- AlphaTab Container -->
             <div class="flex-1 overflow-auto bg-slate-50 p-8 relative" id="score-container">
-                <div id="alphaTab" data-tex="true"></div>
+                <div id="alphaTab"></div>
             </div>
         </section>
     </main>

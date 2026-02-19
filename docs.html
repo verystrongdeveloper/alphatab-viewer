@@ -240,7 +240,7 @@
                             <td class="py-2 font-mono text-slate-500">7.2{p} 5.2</td>
                         </tr>
                         <tr>
-                            <td class="py-2 pr-6"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-700">b (value)</code></td>
+                            <td class="py-2 pr-6"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-700">b (포인트...)</code></td>
                             <td class="py-2 pr-6">벤딩 (Bend)</td>
                             <td class="py-2 font-mono text-slate-500">7.3{b (0 4)}</td>
                         </tr>
@@ -255,30 +255,20 @@
                             <td class="py-2 font-mono text-slate-500">7.3{v}</td>
                         </tr>
                         <tr>
-                            <td class="py-2 pr-6"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-700">pm</code></td>
-                            <td class="py-2 pr-6">팜뮤트 (Palm Mute)</td>
-                            <td class="py-2 font-mono text-slate-500">0.6{pm}</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 pr-6"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-700">x</code></td>
-                            <td class="py-2 pr-6">뮤트 (Dead note)</td>
-                            <td class="py-2 font-mono text-slate-500">0.6{x}</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 pr-6"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-700">tr (fret duration)</code></td>
+                            <td class="py-2 pr-6"><code class="bg-slate-100 px-1.5 py-0.5 rounded text-indigo-700">tr fret duration</code></td>
                             <td class="py-2 pr-6">트릴 (Trill)</td>
                             <td class="py-2 font-mono text-slate-500">7.2{tr 9 16}</td>
                         </tr>
                     </tbody>
                 </table>
                 <pre class="bg-slate-900 text-slate-200 rounded-lg p-4 text-sm font-mono leading-relaxed overflow-x-auto">// 해머온 & 풀오프
-:8 5.2{h} 7.2{h} 9.2{p} 7.2{p} 5.2 |
+:8 5.2{h} 7.2 9.2{p} 7.2 5.2 r r r |
 
 // 벤딩 (0 → 반음 2개 = 1음 올림)
 :4 7.3{b (0 4)} |
 
-// 팜뮤트 파워 코드
-:8 (0.6 2.5){pm} (0.6 2.5){pm} (0.6 2.5){pm} (0.6 2.5){pm} |</pre>
+// 비브라토
+:2 7.2{v} |</pre>
             </div>
         </section>
 
@@ -289,23 +279,55 @@
                 <h3 class="font-bold text-slate-700">전체 예시</h3>
             </div>
             <div class="p-5">
-                <pre class="bg-slate-900 text-slate-200 rounded-lg p-4 text-sm font-mono leading-relaxed overflow-x-auto">\title "Example Song"
+                <pre class="bg-slate-900 text-slate-200 rounded-lg p-4 text-sm font-mono leading-relaxed overflow-x-auto">\title "All Techniques Demo"
+\subtitle "AlphaTex Reference"
 \artist "MetaVibe"
 \tempo 120
 
 .
-// 인트로 - 멜로디
-:8 0.1 3.2 5.2 7.2 8.2 7.2 5.2 3.2 |
+// ① 음표 길이
+:1 0.6 |
+:2 0.6 2.5 |
+:4 0.6 2.5 3.4 5.4 |
+:8 0.6 2.5 3.4 5.4 7.3 5.4 3.4 2.5 |
+:16 5.1 7.1 5.1 7.1 5.1 7.1 5.1 7.1 5.1 7.1 5.1 7.1 5.1 7.1 5.1 7.1 |
 
-// 버스 - 파워 코드 + 팜뮤트
-:8 (0.6 2.5){pm} (0.6 2.5){pm} (0.6 2.5) r (3.6 5.5){pm} (3.6 5.5){pm} (3.6 5.5) r |
+// ② 쉼표
+:4 0.6 r 2.5 r |
 
-// 솔로 - 해머온/풀오프 + 벤딩
-\tempo 140
-:8 5.2{h} 7.2{h} 9.2 7.2{b (0 4)} |
-:16 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 |
+// ③ 코드
+:4 (0.6 2.5 2.4) (0.6 2.5 2.4) (3.6 5.5 5.4) (3.6 5.5 5.4) |
 
-// 엔딩
+// ④ 해머온
+:8 5.2{h} 7.2 5.2{h} 7.2 5.2{h} 7.2 r r |
+
+// ⑤ 풀오프
+:8 7.2{p} 5.2 7.2{p} 5.2 7.2{p} 5.2 r r |
+
+// ⑥ 레가토 슬라이드
+:4 5.3{sl} 7.3 5.3{sl} 7.3 |
+
+// ⑦ 벤딩
+:4 7.3{b (0 4)} r 9.3{b (0 4)} r |
+
+// ⑧ 비브라토
+:2 7.2{v} 9.3{v} |
+
+// ⑨ 트릴
+:2 7.2{tr 9 16} 5.2{tr 7 16} |
+
+// ⑩ 페이드인
+:2 0.6{f} r |
+
+// ⑪ 트레몰로 피킹
+:4 7.3{tp 8} 7.3{tp 8} 7.3{tp 8} 7.3{tp 8} |
+
+// ⑫ 템포 변경 + 속주
+\tempo 160
+:16 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 12.1 15.1 |
+
+// ⑬ 엔딩
+\tempo 80
 :1 (0.6 2.5 2.4 0.3 0.2 0.1)</pre>
             </div>
         </section>

@@ -12,8 +12,8 @@ const settings = {
         engine: 'html5',
     },
     display: {
-        layoutMode: 'page',
-        staves: 'score-tab',
+        layoutMode: 0,    // LayoutMode.Page
+        staveProfile: 3,  // StaveProfile.ScoreTab (악보 + 타브)
     },
     player: {
         enablePlayer: true,
@@ -44,10 +44,20 @@ function initAlphaTab() {
             }
         });
 
+        api.error.on((e) => {
+            statusMsg.innerText = "Syntax Error";
+            statusMsg.classList.add("text-red-500");
+            console.error("AlphaTab Error:", e);
+        });
+
+        api.renderFinished.on(() => {
+            statusMsg.innerText = "Ready";
+            statusMsg.classList.remove("text-red-500");
+        });
+
         api.playerReady.on(() => {
             loadingIndicator.classList.add('hidden');
             btnPlay.disabled = false;
-            statusMsg.innerText = "Audio Ready";
         });
 
         api.playerStateChanged.on((args) => {
@@ -94,17 +104,14 @@ btnStop.addEventListener('click', () => {
 
 function updateScore() {
     if (!api) return;
-    const texData = input.value;
     statusMsg.innerText = "Rendering...";
+    statusMsg.classList.remove("text-red-500");
 
     try {
-        api.tex(texData);
-
-        setTimeout(() => {
-            statusMsg.innerText = "Ready";
-        }, 500);
+        api.tex(input.value);
     } catch (err) {
         statusMsg.innerText = "Syntax Error";
+        statusMsg.classList.add("text-red-500");
         console.error(err);
     }
 }
