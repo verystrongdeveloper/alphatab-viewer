@@ -126,16 +126,7 @@
         <!-- Renderer Section (Right) -->
         <section class="flex-1 bg-white relative overflow-hidden flex flex-col">
             <!-- Toolbar for Settings -->
-            <div class="h-12 border-b border-slate-100 flex items-center px-4 justify-between text-sm text-slate-600 bg-white z-10">
-                
-                <div class="flex items-center gap-4">
-                    <!-- Layout Mode Only -->
-                    <label class="flex items-center gap-2 cursor-pointer hover:text-indigo-600 transition-colors select-none">
-                        <input type="checkbox" id="chk-layout" checked class="accent-indigo-600 w-4 h-4">
-                        <span>페이지 모드</span>
-                    </label>
-                </div>
-
+            <div class="h-12 border-b border-slate-100 flex items-center px-4 justify-end text-sm text-slate-600 bg-white z-10">
                 <span id="status-msg" class="text-xs text-slate-400 font-mono">Ready</span>
             </div>
 
@@ -156,16 +147,14 @@
         const btnStop = document.getElementById('btn-stop');
         const loadingIndicator = document.getElementById('loading-indicator');
         const statusMsg = document.getElementById('status-msg');
-        const chkLayout = document.getElementById('chk-layout');
-
         // Initial settings
         const settings = {
             core: {
                 engine: 'html5',
             },
             display: {
-                layoutMode: 'page', // 기본값: 페이지 모드
-                staves: 'score-tab', // 고정값: 악보 + 타브
+                layoutMode: 'page',
+                staves: 'score-tab',
             },
             player: {
                 enablePlayer: true,
@@ -199,27 +188,6 @@
                         e.preventDefault();
                         updateScore();
                     }
-                });
-
-                // 3. Layout Toggle (강력하게 수정됨)
-                chkLayout.addEventListener('change', (e) => {
-                    if(!api) return;
-                    
-                    const isPageMode = e.target.checked;
-                    const mode = isPageMode ? 'page' : 'horizontal';
-                    
-                    console.log("Layout changing to:", mode);
-                    
-                    // 1. 설정 객체 직접 수정
-                    api.settings.display.layoutMode = mode;
-                    
-                    // 2. 업데이트 함수 호출
-                    api.updateSettings({ display: { layoutMode: mode } });
-                    
-                    // 3. 렌더링 강제 실행 (updateScore가 api.tex를 호출하여 다시 그림)
-                    updateScore();
-                    
-                    statusMsg.innerText = isPageMode ? "Page Mode" : "Horizontal Mode";
                 });
 
                 // --- Player Events ---
@@ -277,16 +245,13 @@
         function updateScore() {
             if (!api) return;
             const texData = input.value;
-            // 상태 메시지 업데이트
-            const currentMode = chkLayout.checked ? "Page" : "Horizontal";
-            statusMsg.innerText = `Rendering (${currentMode})...`;
+            statusMsg.innerText = "Rendering...";
             
             try {
-                // api.tex()를 호출하면 현재 설정(레이아웃 등)을 반영하여 다시 그립니다.
                 api.tex(texData);
                 
                 setTimeout(() => {
-                    statusMsg.innerText = `Ready (${currentMode})`;
+                    statusMsg.innerText = "Ready";
                 }, 500);
             } catch (err) {
                 statusMsg.innerText = "Syntax Error";
