@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlphaTex Renderer - MetaVibe</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- AlphaTab Script (Stable Version 1.2.3 via UNPKG) -->
+    <script src="https://unpkg.com/@coderline/alphatab@1.2.3/dist/alphatab.min.js" 
+            onerror="console.error('AlphaTab script failed to load.'); alert('AlphaTab 스크립트 로딩 실패. 새로고침 해주세요.');"></script>
+            
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* 커스텀 스크롤바 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        /* AlphaTab 커서 스타일 */
+        .at-cursor-bar {
+            background: rgba(255, 242, 0, 0.25);
+        }
+        .at-selection div {
+            background: rgba(64, 168, 255, 0.2);
+        }
+        .at-cursor-beat {
+            background: rgba(64, 168, 255, 0.75);
+            width: 3px;
+        }
+        .at-highlight {
+            fill: #0078ff;
+            stroke: #0078ff; 
+        }
+    </style>
+</head>
+<body class="bg-slate-100 h-screen flex flex-col overflow-hidden font-sans">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between shadow-sm z-10">
+        <div class="flex items-center gap-3">
+            <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                <i class="fa-solid fa-guitar"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-slate-800">AlphaTex Studio</h1>
+                <p class="text-xs text-slate-500">Powered by MetaVibe</p>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex items-center gap-4">
+            <div id="loading-indicator" class="hidden text-sm text-indigo-600 font-semibold animate-pulse">
+                <i class="fa-solid fa-circle-notch fa-spin mr-1"></i> 사운드폰트 로딩 중...
+            </div>
+            
+            <div class="flex bg-slate-100 rounded-lg p-1 gap-1">
+                <button id="btn-play" class="w-10 h-10 flex items-center justify-center rounded hover:bg-white hover:shadow text-slate-600 hover:text-indigo-600 transition-all disabled:opacity-50" disabled title="Play">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+                <button id="btn-pause" class="hidden w-10 h-10 flex items-center justify-center rounded hover:bg-white hover:shadow text-slate-600 hover:text-indigo-600 transition-all" title="Pause">
+                    <i class="fa-solid fa-pause"></i>
+                </button>
+                <button id="btn-stop" class="w-10 h-10 flex items-center justify-center rounded hover:bg-white hover:shadow text-slate-600 hover:text-red-500 transition-all disabled:opacity-50" disabled title="Stop">
+                    <i class="fa-solid fa-stop"></i>
+                </button>
+            </div>
+
+            <button id="btn-render" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 shadow-sm">
+                <i class="fa-solid fa-rotate"></i> 렌더링
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex overflow-hidden">
+        
+        <!-- Editor Section (Left) -->
+        <section class="w-1/3 min-w-[300px] bg-slate-900 flex flex-col border-r border-slate-700">
+            <div class="bg-slate-800 px-4 py-2 text-xs font-mono text-slate-400 border-b border-slate-700 flex justify-between">
+                <span>INPUT: ALPHATEX</span>
+                <span class="text-slate-500">Ctrl+Enter to Render</span>
+            </div>
+            <textarea id="tex-input" class="flex-1 w-full bg-slate-900 text-slate-200 font-mono text-sm p-4 resize-none focus:outline-none leading-relaxed" spellcheck="false">
+\title "TabRoll Demo"
+\subtitle "MetaVibe Original"
+\artist "User"
+\tempo 120
+
+. 
+// ↑↑↑ 점(.) 필수!
+
+// 1. 멜로디 파트
+:4 3.5 5.5 6.5 7.5 |
+:4 3.5 5.5 6.5 7.5 |
+
+// 2. 파워 코드
+(0.6 2.5 2.4) (0.6 2.5 2.4) (0.6 2.5 2.4) (0.6 2.5 2.4) |
+(3.6 5.5 5.4) (3.6 5.5 5.4) (3.6 5.5 5.4) (3.6 5.5 5.4) |
+
+// 3. 다시 멜로디
+:2 3.4 5.4 :4 6.4 8.4 |
+:2 3.4 5.4 :4 6.4 8.4 |
+
+\tempo 160
+// 4. 빠른 속주
+:8 12.2 15.2 12.2 15.2 12.2 15.2 12.2 15.2 | 
+:1 (0.6 2.5 2.4 0.3 0.2 0.1)
+</textarea>
+        </section>
+
+        <!-- Renderer Section (Right) -->
+        <section class="flex-1 bg-white relative overflow-hidden flex flex-col">
+            <!-- Toolbar for Settings -->
+            <div class="h-12 border-b border-slate-100 flex items-center px-4 justify-between text-sm text-slate-600 bg-white z-10">
+                
+                <div class="flex items-center gap-4">
+                    <!-- Layout Mode Only -->
+                    <label class="flex items-center gap-2 cursor-pointer hover:text-indigo-600 transition-colors select-none">
+                        <input type="checkbox" id="chk-layout" checked class="accent-indigo-600 w-4 h-4">
+                        <span>페이지 모드</span>
+                    </label>
+                </div>
+
+                <span id="status-msg" class="text-xs text-slate-400 font-mono">Ready</span>
+            </div>
+
+            <!-- AlphaTab Container -->
+            <div class="flex-1 overflow-auto bg-slate-50 p-8 relative" id="score-container">
+                <div id="alphaTab" data-tex="true"></div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // DOM Elements
+        const input = document.getElementById('tex-input');
+        const container = document.getElementById('alphaTab');
+        const btnRender = document.getElementById('btn-render');
+        const btnPlay = document.getElementById('btn-play');
+        const btnPause = document.getElementById('btn-pause');
+        const btnStop = document.getElementById('btn-stop');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const statusMsg = document.getElementById('status-msg');
+        const chkLayout = document.getElementById('chk-layout');
+
+        // Initial settings
+        const settings = {
+            core: {
+                engine: 'html5',
+            },
+            display: {
+                layoutMode: 'page', // 기본값: 페이지 모드
+                staves: 'score-tab', // 고정값: 악보 + 타브
+            },
+            player: {
+                enablePlayer: true,
+                soundFont: 'https://unpkg.com/@coderline/alphatab@1.2.3/dist/soundfont/sonivox.sf2',
+                scrollElement: document.getElementById('score-container')
+            }
+        };
+
+        let api = null;
+
+        function initAlphaTab() {
+            if (!window.alphaTab) {
+                console.error("AlphaTab object not found.");
+                statusMsg.innerText = "Error: AlphaTab JS not loaded";
+                statusMsg.classList.add("text-red-500");
+                return;
+            }
+
+            try {
+                // Initialize
+                api = new window.alphaTab.AlphaTabApi(container, settings);
+
+                // --- Event Listeners ---
+
+                // 1. Render Button
+                btnRender.addEventListener('click', updateScore);
+
+                // 2. Ctrl+Enter
+                input.addEventListener('keydown', (e) => {
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                        e.preventDefault();
+                        updateScore();
+                    }
+                });
+
+                // 3. Layout Toggle (강력하게 수정됨)
+                chkLayout.addEventListener('change', (e) => {
+                    if(!api) return;
+                    
+                    const isPageMode = e.target.checked;
+                    const mode = isPageMode ? 'page' : 'horizontal';
+                    
+                    console.log("Layout changing to:", mode);
+                    
+                    // 1. 설정 객체 직접 수정
+                    api.settings.display.layoutMode = mode;
+                    
+                    // 2. 업데이트 함수 호출
+                    api.updateSettings({ display: { layoutMode: mode } });
+                    
+                    // 3. 렌더링 강제 실행 (updateScore가 api.tex를 호출하여 다시 그림)
+                    updateScore();
+                    
+                    statusMsg.innerText = isPageMode ? "Page Mode" : "Horizontal Mode";
+                });
+
+                // --- Player Events ---
+
+                api.playerReady.on(() => {
+                    loadingIndicator.classList.add('hidden');
+                    btnPlay.disabled = false;
+                    statusMsg.innerText = "Audio Ready";
+                });
+
+                api.playerStateChanged.on((args) => {
+                    const isPlaying = args.state === 1;
+                    
+                    if (isPlaying) {
+                        btnPlay.classList.add('hidden');
+                        btnPause.classList.remove('hidden');
+                        btnStop.disabled = false;
+                        statusMsg.innerText = "Playing 🎵";
+                        statusMsg.classList.add("text-indigo-600");
+                    } else {
+                        btnPlay.classList.remove('hidden');
+                        btnPause.classList.add('hidden');
+                        statusMsg.innerText = "Paused ⏸";
+                        statusMsg.classList.remove("text-indigo-600");
+                    }
+                });
+
+                // Initial Render
+                updateScore();
+
+            } catch (e) {
+                console.error("Init Error:", e);
+                statusMsg.innerText = "Init Failed";
+            }
+        }
+
+        // Play/Pause Controls
+        btnPlay.addEventListener('click', () => {
+            if(api && !api.playerReady) loadingIndicator.classList.remove('hidden');
+            if(api) api.playPause();
+        });
+
+        btnPause.addEventListener('click', () => {
+            if(api) api.playPause();
+        });
+
+        btnStop.addEventListener('click', () => {
+            if(api) {
+                api.stop();
+                btnStop.disabled = true;
+                statusMsg.innerText = "Stopped";
+            }
+        });
+
+        function updateScore() {
+            if (!api) return;
+            const texData = input.value;
+            // 상태 메시지 업데이트
+            const currentMode = chkLayout.checked ? "Page" : "Horizontal";
+            statusMsg.innerText = `Rendering (${currentMode})...`;
+            
+            try {
+                // api.tex()를 호출하면 현재 설정(레이아웃 등)을 반영하여 다시 그립니다.
+                api.tex(texData);
+                
+                setTimeout(() => {
+                    statusMsg.innerText = `Ready (${currentMode})`;
+                }, 500);
+            } catch (err) {
+                statusMsg.innerText = "Syntax Error";
+                console.error(err);
+            }
+        }
+
+        window.addEventListener('load', () => setTimeout(initAlphaTab, 100));
+    </script>
+</body>
+</html>
